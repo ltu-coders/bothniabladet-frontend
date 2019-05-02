@@ -15,7 +15,19 @@ function UploadImage(props) {
         <input type="file" name="file" />
         
         </div>
-        <div><button type="button" class="btn btn-success btn-block" onClick="#" >Ladda upp</button>
+        <div>
+            <label>Tags</label>
+            <input className="input-form" type="text"></input>
+        </div>
+        <div>
+            <label>Licens</label>
+            <input className="input-form" type="text"></input>
+        </div>
+        <div>
+            <label>Fotograf</label>
+            <input className="input-form" type="text"></input>
+        </div>
+        <div><button type="button" class="btn btn-success btn-block" onClick={onClickHandler} >Ladda upp</button>
         </div>
         
         </div>
@@ -27,6 +39,12 @@ function UploadImage(props) {
    
 }
 
+/**
+ * onClick handler 
+ */
+function onClickHandler(event){
+    console.log(event.target.type);
+}
 /**
  * Sida för att skicka in tips
  */
