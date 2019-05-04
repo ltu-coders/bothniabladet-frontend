@@ -1,6 +1,6 @@
 import React from 'react';
 import { getImages, getImage } from './repository.js'
-import { UploadImage, SendTip } from './Upload.js'
+import { Upload } from './Upload.js'
 
 const pages = {
   SEARCH: "search",
@@ -44,6 +44,8 @@ class App extends React.Component {
     })
   }
 
+  
+
   /**
    * Gå till sida för att ladda upp bild
    */
@@ -72,9 +74,9 @@ class App extends React.Component {
     else if (this.state.currentPage === pages.SHOW_IMAGE)
       content = <SingleImage ImageId={this.state.currentImageId} />
     else if (this.state.currentPage === pages.UPLOAD_IMAGE)
-      content = <UploadImage />
+      content = <Upload/>
     else if (this.state.currentPage === pages.SEND_TIP)
-      content = <SendTip />
+      content = <Upload />
     else
       content = <div className="alert alert-danger">Den här borde inte synas!</div>
 
