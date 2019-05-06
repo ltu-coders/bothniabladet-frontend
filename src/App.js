@@ -37,14 +37,14 @@ class App extends React.Component {
   /**
    * Visa sida för en bild
    */
-  showImage(imageId) {
+  showImage(image) {
     this.setState({
       currentPage: pages.SHOW_IMAGE,
-      currentImageId: imageId
+      currentImage: image
     })
   }
 
-  
+
 
   /**
    * Gå till sida för att ladda upp bild
@@ -72,9 +72,9 @@ class App extends React.Component {
     else if (this.state.currentPage === pages.RESULT)
       content = <Results searchTerm={this.state.searchTerm} showImage={this.showImage} />;
     else if (this.state.currentPage === pages.SHOW_IMAGE)
-      content = <SingleImage ImageId={this.state.currentImageId} />
+      content = <SingleImage image={this.state.currentImage} />
     else if (this.state.currentPage === pages.UPLOAD_IMAGE)
-      content = <Upload/>
+      content = <Upload />
     else if (this.state.currentPage === pages.SEND_TIP)
       content = <Upload />
     else
@@ -119,18 +119,40 @@ const Activities = ({ uploadImage, sendTip }) =>
 /**
  * Sida med sökresultat
  */
-function Results(props) {
-  var results = getImages("hej")
-  let cards = results.map((image) => <ResultCard image={image} showImage={() => props.showImage(image.imageId)}></ResultCard>)
-  return <div className="container">
-    <div className="alert alert-success">Bravo, här är resultaten, du sökte efter {props.searchTerm}</div>
-    <section>
-      <div className="row">
-        {cards}
+class Results extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loading: 1,
+      results: []
+    }
 
-      </div>
-    </section>
-  </div>
+    var xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          this.setState({ results: JSON.parse(xhr.responseText) })
+        } else {
+          alert('There was a problem with the request.');
+        }
+      }
+    }
+    xhr.open('GET', '/images')
+    xhr.send()
+  }
+
+  render() {
+    let cards = this.state.results.map((image) =>
+      <ResultCard image={image} key={image.imageId} showImage={() => this.props.showImage(image)} />)
+    return <div className="container">
+      <div className="alert alert-success">Bravo, här är resultaten, du sökte efter {this.props.searchTerm}</div>
+      <section>
+        <div className="row">
+          {cards}
+        </div>
+      </section>
+    </div>
+  }
 }
 
 /**
@@ -139,7 +161,7 @@ function Results(props) {
 function ResultCard({ image, showImage }) {
   return <div className="col-6 col-md-3" onClick={showImage}>
     <div className="card">
-      <img className="card-img-top" src={image.filePath + image.fileName} alt="Exempel" />
+      <img className="card-img-top" src={'/image/' + image.fileName} alt="Exempel" />
       <div className="card-body">
         <p className="card-text">Det här är bild {image.fileName}</p>
 
@@ -155,10 +177,25 @@ function ResultCard({ image, showImage }) {
  * Sida med en bild
  */
 function SingleImage(props) {
-  let image = getImage(props.ImageId)
   return (
     <div className="container">
-      <img className="card-img-top" src={image.filePath + image.fileName} alt="Exempel" />
+      <img className="card-img-top" src={'/image/' + props.image.fileName} alt="Exempel" />
+      <table class="table table-borderless">
+        <tbody>
+          <tr>
+            <td>Otto</td>
+            <td>@mdo</td>
+          </tr>
+          <tr>
+            <td>Thornton</td>
+            <td>@fat</td>
+          </tr>
+          <tr>
+            <td>Larry the Bird</td>
+            <td>@twitter</td>
+          </tr>
+        </tbody>
+      </table>
     </div>)
 }
 
