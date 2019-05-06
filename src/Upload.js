@@ -23,8 +23,8 @@ class Upload extends React.Component{
         
         selectedFile: null,
         tags: [
-            {id: "thailand"},
-            {text: "thailand"},
+            
+           
 
         ]
 
@@ -62,56 +62,7 @@ handleAddition(tag) {
  * Sida för uppladdning av bilder
  */
 
-UploadImage() {
-    
-    return (<div className="container">
-        <p></p>
-        
-        <div className="row">
-        <div className="offset-md-3 col-md-6">
-        <div className="form-group files">
-        <label>Ladda upp bild</label>
-        <input type="file" name="file" onChange={this.onChangeHandler}/>
-        
-        </div>
-        
-<div className="md-form">
-<label for="form1">Titel</label>
-  <input type="text" id="form1" class="form-control"/>
 
-</div>
-
-
-<div className="md-form">
-<label for="form1">Licens</label>
-  <input type="text" id="form1" class="form-control"/>
-  
-</div>
-
-<div className="md-form">
-<label for="form1">Tags</label>
-
-         <ReactTags tags={this.tags}
-        handleDelete={this.handleDelete}
-        handleAddition={this.handleAddition}
-        delimiters={delimiters} />
-</div>
-<br></br>
-
-            <div><button type="button" className="btn btn-primary btn-block" >Ladda upp</button>
-        </div>
-  
-</div>
-
-        
-        </div>
-   
-        
-        
-        
-    </div>)
-   
-}
 
   /**
  * onChange handler 
@@ -142,8 +93,58 @@ SendTip(props) {
 
 
 render(){
-    const { tags} = this.state;
-    return this.UploadImage();
+    const {tags} = this.state;
+    if(this.state.tags.id === ""){
+        this.handleDelete(333);
+    }
+    
+    return (<div className="container">
+    <p></p>
+    
+    <div className="row">
+    <div className="offset-md-3 col-md-6">
+    <div className="form-group files">
+    <label>Ladda upp bild</label>
+    <input type="file" name="file" onChange={this.onChangeHandler}/>
+    
+    </div>
+    
+<div className="md-form">
+<label for="form1">Titel</label>
+<input type="text" id="form1" class="form-control"/>
+
+</div>
+
+
+<div className="md-form">
+<label for="form1">Licens</label>
+<input type="text" id="form1" class="form-control"/>
+
+</div>
+
+<div className="md-form">
+<label for="form1">Taggar</label>
+
+     <ReactTags tags={tags}
+     
+    handleDelete={this.handleDelete}
+    handleAddition={this.handleAddition}
+    delimiters={delimiters} />
+</div>
+<br></br>
+
+        <div><button type="button" className="btn btn-primary btn-block" >Ladda upp</button>
+    </div>
+
+</div>
+
+    
+    </div>
+
+    
+    
+    
+</div>);
     
 }
 
