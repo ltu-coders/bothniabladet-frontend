@@ -26,6 +26,7 @@ class Upload extends React.Component{
         images: "",
         licensetype: "",
         tags:"",
+        description:""
 
 
 
@@ -93,23 +94,33 @@ SendTip(props) {
 submitHandler(event){
     event.preventDefault();
     console.log(this.state);
-   const {images,author,licensetype,tags} = this.state;
+   const {images,author,licensetype,tags,description} = this.state;
    
+    const params = new URLSearchParams();
+    params.append('image',images);
+    params.append('author',author);
+    params.append('license',licensetype);
+    params.append('tags',tags);
+
    let formData = new FormData();
    formData.append('image',images);
    formData.append('author',author);
-   formData.append('license',licensetype);
+   formData.append('licensetype',licensetype);
    formData.append('tags',tags);
-    axios.post('http://localhost:3000/images', formData,{
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-    })
+   formData.append('description',description);
+
+   
+    axios.post('http://localhost:3000/images', formData)
     .then(response =>{
         console.log(response)
     })
     .catch(error => {
         console.log(error)
+        console.log(error.response)
+        console.log(error.message)
+          
+        console.log(error.config);
+        
     })
 }
 
@@ -123,9 +134,9 @@ fileHandler(event){
 
 render(){
    
-    const {tags,author,licensetype} = this.state;
+    const {tags,author,licensetype,description} = this.state;
     return(<div className="container">
-    <form onSubmit={this.submitHandler} method="post" encType="multipart/form-data">
+    <form onSubmit={this.submitHandler} method="POST" encType="multipart/form-data">
         <div>
         
             <input type="file" onChange={this.fileHandler}/>
@@ -138,6 +149,9 @@ render(){
         </div>
         <div>
             <input type="text" name="tags" value={tags} onChange={this.onChangeHandler}/>
+        </div>
+        <div>
+            <input type="text" name="description" value={description} onChange={this.onChangeHandler}/>
         </div>
         <button type="submit">Submit</button>
 
