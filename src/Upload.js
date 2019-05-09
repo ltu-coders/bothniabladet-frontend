@@ -1,5 +1,6 @@
 import React from 'react';
 import { WithContext as ReactTags } from 'react-tag-input';
+import axios from 'axios';
 
 
 /**
@@ -21,18 +22,19 @@ class Upload extends React.Component{
     
     this.state = {
         
-        selectedFile: null,
-        tags: [
-            
-           
+        author: "",
+        images: "",
+        licensetype: "",
+        tags:"",
 
-        ]
 
 
     };
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
+    this.fileHandler = this.fileHandler.bind(this);
    
     
 }
@@ -68,12 +70,9 @@ handleAddition(tag) {
  * onChange handler 
  */
 onChangeHandler(event){
-    this.setState({
-        selectedFile: event.target.files[0],
-        loaded: 0,
-        
-        
-    })
+ 
+    this.setState({[event.target.name]: event.target.value})
+    console.log(event.target.value)
 
   }
 
@@ -86,63 +85,58 @@ SendTip(props) {
     </div>
 }
 
+/**
+ * submit handler 
+ */
 
 
+submitHandler(event){
+    event.preventDefault();
+    console.log(this.state);
+    axios.post('http://localhost:3000/images', this.state,{
+        headers: {
+            'Content-Type': 'multipart/form-data',
+           
+            
+        }
+    })
+    .then(response =>{
+        console.log(response)
+    })
+    .catch(error => {
+        console.log(error)
+    })
+}
+
+fileHandler(event){
+    let fileUpload = event.target.files[0];
+    this.setState({images:fileUpload});
+}
                    
             
 
 
 render(){
-    const {tags} = this.state;
-    if(this.state.tags.id === ""){
-        this.handleDelete(333);
-    }
-    
-    return (<div className="container">
-    <p></p>
-    
-    <div className="row">
-    <div className="offset-md-3 col-md-6">
-    <div className="form-group files">
-    <label>Ladda upp bild</label>
-    <input type="file" name="file" onChange={this.onChangeHandler}/>
-    
-    </div>
-    
-<div className="md-form">
-<label for="form1">Titel</label>
-<input type="text" id="form1" class="form-control"/>
+   
+    const {images,tags,author,licensetype} = this.state;
+    return(<div className="container">
+    <form onSubmit={this.submitHandler} method="post" encType="multipart/form-data">
+        <div>
+        
+            <input type="file" onChange={this.fileHandler}/>
+        </div>
+        <div>
+            <input type="text" name="author" value={author} onChange={this.onChangeHandler}/>
+        </div>
+        <div>
+            <input type="text" name="licensetype" value={licensetype} onChange={this.onChangeHandler}/>
+        </div>
+        <div>
+            <input type="text" name="tags" value={tags} onChange={this.onChangeHandler}/>
+        </div>
+        <button type="submit">Submit</button>
 
-</div>
-
-
-<div className="md-form">
-<label for="form1">Licens</label>
-<input type="text" id="form1" class="form-control"/>
-
-</div>
-
-<div className="md-form">
-<label for="form1">Taggar</label>
-
-     <ReactTags tags={tags}
-     
-    handleDelete={this.handleDelete}
-    handleAddition={this.handleAddition}
-    delimiters={delimiters} />
-</div>
-<br></br>
-
-        <div><button type="button" className="btn btn-primary btn-block" >Ladda upp</button>
-    </div>
-
-</div>
-
-    
-    </div>
-
-    
-    
+    </form>
     
 </div>);
     
