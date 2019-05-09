@@ -72,7 +72,7 @@ handleAddition(tag) {
 onChangeHandler(event){
  
     this.setState({[event.target.name]: event.target.value})
-    console.log(event.target.value)
+    
 
   }
 
@@ -93,11 +93,16 @@ SendTip(props) {
 submitHandler(event){
     event.preventDefault();
     console.log(this.state);
-    axios.post('http://localhost:3000/images', this.state,{
+   const {images,author,licensetype,tags} = this.state;
+   
+   let formData = new FormData();
+   formData.append('image',images);
+   formData.append('author',author);
+   formData.append('license',licensetype);
+   formData.append('tags',tags);
+    axios.post('http://localhost:3000/images', formData,{
         headers: {
-            'Content-Type': 'multipart/form-data',
-           
-            
+          'Content-Type': 'multipart/form-data'
         }
     })
     .then(response =>{
@@ -118,7 +123,7 @@ fileHandler(event){
 
 render(){
    
-    const {images,tags,author,licensetype} = this.state;
+    const {tags,author,licensetype} = this.state;
     return(<div className="container">
     <form onSubmit={this.submitHandler} method="post" encType="multipart/form-data">
         <div>
