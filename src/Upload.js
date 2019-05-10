@@ -1,5 +1,4 @@
 import React from 'react';
-import { WithContext as ReactTags } from 'react-tag-input';
 import axios from 'axios';
 
 
@@ -96,14 +95,10 @@ submitHandler(event){
     console.log(this.state);
    const {images,author,licensetype,tags,description} = this.state;
    
-    const params = new URLSearchParams();
-    params.append('image',images);
-    params.append('author',author);
-    params.append('license',licensetype);
-    params.append('tags',tags);
+   
 
    let formData = new FormData();
-   formData.append('image',images);
+   formData.append('images',images);
    formData.append('author',author);
    formData.append('licensetype',licensetype);
    formData.append('tags',tags);
@@ -137,27 +132,54 @@ render(){
     const {tags,author,licensetype,description} = this.state;
     return(<div className="container">
     <form onSubmit={this.submitHandler} method="POST" encType="multipart/form-data">
-        <div>
-        
-            <input type="file" onChange={this.fileHandler}/>
-        </div>
-        <div>
-            <input type="text" name="author" value={author} onChange={this.onChangeHandler}/>
-        </div>
-        <div>
-            <input type="text" name="licensetype" value={licensetype} onChange={this.onChangeHandler}/>
-        </div>
-        <div>
-            <input type="text" name="tags" value={tags} onChange={this.onChangeHandler}/>
-        </div>
-        <div>
-            <input type="text" name="description" value={description} onChange={this.onChangeHandler}/>
-        </div>
-        <button type="submit">Submit</button>
-
-    </form>
+    <div className="row">
+    <div className="offset-md-3 col-md-6">
+    <div className="form-group files">
+    <label>Ladda upp bild</label>
+    <input type="file" name="images" onChange={this.fileHandler}/>
     
-</div>);
+    </div>
+    
+<div className="md-form">
+<label for="form1">Fotograf</label>
+<input type="text" id="form1" class="form-control" name="author" value={author}  onChange={this.onChangeHandler}/>
+
+</div>
+
+
+<div className="md-form">
+<label for="form1">Licens</label>
+<input type="text" id="form1" class="form-control" name="licensetype" value={licensetype} onChange={this.onChangeHandler}/>
+
+</div>
+
+<div className="md-form">
+<label for="form1">Taggar</label>
+<input type="text" id="form1" class="form-control" name="tags" value={tags} onChange={this.onChangeHandler}/>
+</div>
+
+<div className="md-form">
+<label for="form1">Beskrivning</label>
+<input type="text" id="form1" class="form-control" name="description" value={description} onChange={this.onChangeHandler}/>
+</div>
+<br></br>
+
+        <div><button type="submit" className="btn btn-primary btn-block" >Ladda upp</button>
+    </div>
+
+</div>
+
+    
+    </div>
+
+    
+    
+  </form>  
+</div>
+
+
+);
+   
     
 }
 
