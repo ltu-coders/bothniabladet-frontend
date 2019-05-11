@@ -137,7 +137,10 @@ class Results extends React.Component {
         }
       }
     }
-    xhr.open('GET', '/images')
+    if (props.searchTerm)
+      xhr.open('GET', `/images?tags=${props.searchTerm.replace(" ", ",")}`)
+    else
+    xhr.open('GET', `/images`)
     xhr.send()
   }
 
@@ -159,15 +162,18 @@ class Results extends React.Component {
  * En bild i sökresultaten
  */
 function ResultCard({ image, showImage }) {
+  let dateString = (new Date(Date.parse(image.dateTime))).toLocaleDateString()
+  //let dateString = `${imageDate.getFullYear()}-${imageDate.getMonth() + 1}-${imageDate.getDate()}` 
+
   return <div className="col-6 col-md-3" onClick={showImage}>
     <div className="card">
-      <img className="card-img-top" src={'/image/' + image.fileName} alt="Exempel" />
+      <img className="card-img-top" src={'/images/' + image.fileName} alt="Exempel" />
       <div className="card-body">
-        <p className="card-text">Det här är bild {image.fileName}</p>
+        <p className="card-text">{image.description}</p>
 
       </div>
       <div className="card-footer">
-        <small className="text-muted">{image.author.firstName} {image.author.lastName} {image.dateTime}</small>
+        <small className="text-muted">{image.author.firstName} {image.author.lastName} {dateString}</small>
       </div>
     </div>
   </div>
@@ -176,26 +182,33 @@ function ResultCard({ image, showImage }) {
 /**
  * Sida med en bild
  */
-function SingleImage(props) {
+function SingleImage({ image }) {
+  window.scrollTo(0, 0)
+  let dateString = (new Date(Date.parse(image.dateTime))).toLocaleDateString()
+  let tags = image.tags.map(t => t.tagName).join(', ')
+
   return (
     <div className="container">
-      <img className="card-img-top" src={'/image/' + props.image.fileName} alt="Exempel" />
-      <table class="table table-borderless">
-        <tbody>
-          <tr>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <td>Larry the Bird</td>
-            <td>@twitter</td>
-          </tr>
-        </tbody>
-      </table>
+      <h1>{image.description}</h1>
+      <img className="card-img-top" src={'/images/' + image.fileName} alt="Exempel" />
+      <div className="row">
+        <div className="col">
+          <ul className="list-group">
+            <li className="list-group-item">Upphovsman: {image.author.firstName} {image.author.lastName}</li>
+            <li className="list-group-item">Datum: {dateString}</li>
+            <li className="list-group-item">Taggar: {tags}</li>
+            <li className="list-group-item">Filnamn: {image.fileName}</li>
+          </ul>
+        </div>
+        <div className="col">
+          <ul className="list-group">
+            <li className="list-group-item">Licens: {image.licenseType}</li>
+            <li className="list-group-item">Plats: {image.location}</li>
+            <li className="list-group-item">Antal användningar/tillåtna: {image.imageUseCount}/{image.noOfAllowedUses}</li>
+            <li className="list-group-item">PUID: {image.puid}</li>
+          </ul>
+        </div>
+      </div>
     </div>)
 }
 
