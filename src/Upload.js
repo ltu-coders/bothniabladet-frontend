@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import SuccessAlert from './SuccessAlert';
+import FailureAlert from './FailureAlert';
 
 
 /**
@@ -25,7 +27,11 @@ class Upload extends React.Component{
         images: "",
         licensetype: "",
         tags:"",
-        description:""
+        description:"",
+        alertMessage:"",
+        loading: false,
+        visable: true
+
 
 
 
@@ -35,6 +41,7 @@ class Upload extends React.Component{
     this.handleAddition = this.handleAddition.bind(this);
     this.submitHandler = this.submitHandler.bind(this);
     this.fileHandler = this.fileHandler.bind(this);
+    this.resetFailureAlert = this.resetFailureAlert.bind(this);
    
     
 }
@@ -94,8 +101,7 @@ submitHandler(event){
     event.preventDefault();
     console.log(this.state);
    const {images,author,licensetype,tags,description} = this.state;
-   
-   
+   this.setState({loading:true})
 
    let formData = new FormData();
    formData.append('images',images);
@@ -105,9 +111,16 @@ submitHandler(event){
    formData.append('description',description);
 
    
-    axios.post('http://localhost:3000/images', formData)
+    axios.post('http://localhost:3000/images/', formData)
     .then(response =>{
+        setTimeout(()=>{
+       //faking API call
+       this.setState({loading:false});
+   
+    },response.setTimeout)
         console.log(response)
+        this.setState({alertMessage:"success"});
+        
     })
     .catch(error => {
         console.log(error)
@@ -115,13 +128,26 @@ submitHandler(event){
         console.log(error.message)
           
         console.log(error.config);
+        setTimeout(()=>{
+            //faking API call
+            this.setState({loading:false});
+        
+         })
+        this.setState({alertMessage:"error"})
+        
         
     })
 }
 
 fileHandler(event){
     let fileUpload = event.target.files[0];
-    this.setState({images:fileUpload});
+    this.setState({images:fileUpload,alertMessage:""});
+
+}
+
+resetFailureAlert(){
+    this.setState({visable:true});
+
 }
                    
             
@@ -129,42 +155,52 @@ fileHandler(event){
 
 render(){
    
-    const {tags,author,licensetype,description} = this.state;
+    const {tags,author,licensetype,description,loading} = this.state;
     return(<div className="container">
-    <form onSubmit={this.submitHandler} method="POST" encType="multipart/form-data">
+     {this.state.alertMessage=="success"?<SuccessAlert/>:null}
+    {this.state.alertMessage=="error"?<FailureAlert/>:null}
+    {this.state.alertMessage==""?null:null}
+    <form onSubmit={this.submitHandler}  method="POST" encType="multipart/form-data">
+    
     <div className="row">
     <div className="offset-md-3 col-md-6">
     <div className="form-group files">
     <label>Ladda upp bild</label>
     <input type="file" name="images" onChange={this.fileHandler}/>
     
+    
     </div>
     
 <div className="md-form">
 <label for="form1">Fotograf</label>
-<input type="text" id="form1" class="form-control" name="author" value={author}  onChange={this.onChangeHandler}/>
+<input type="text" id="form1" className="form-control" name="author" value={author}  onChange={this.onChangeHandler}/>
 
 </div>
 
 
 <div className="md-form">
 <label for="form1">Licens</label>
-<input type="text" id="form1" class="form-control" name="licensetype" value={licensetype} onChange={this.onChangeHandler}/>
+<input type="text" id="form1" className="form-control" name="licensetype" value={licensetype} onChange={this.onChangeHandler}/>
 
 </div>
 
 <div className="md-form">
 <label for="form1">Taggar</label>
-<input type="text" id="form1" class="form-control" name="tags" value={tags} onChange={this.onChangeHandler}/>
+<input type="text" id="form1" className="form-control" name="tags" value={tags} onChange={this.onChangeHandler}/>
 </div>
 
 <div className="md-form">
 <label for="form1">Beskrivning</label>
-<input type="text" id="form1" class="form-control" name="description" value={description} onChange={this.onChangeHandler}/>
+<input type="text" id="form1" className="form-control" name="description" value={description} onChange={this.onChangeHandler}/>
 </div>
 <br></br>
 
-        <div><button type="submit" className="btn btn-primary btn-block" >Ladda upp</button>
+        <div><button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+                    {loading && <span>Laddar upp bild..</span>}
+                    {!loading && <span>Ladda upp</span>}
+                    
+        
+            </button>
     </div>
 
 </div>
@@ -175,6 +211,7 @@ render(){
     
     
   </form>  
+  
 </div>
 
 
