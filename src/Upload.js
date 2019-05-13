@@ -39,12 +39,13 @@ class Upload extends React.Component {
         this.state = {
             author: "",
             images: "",
-            licensetype: "",
+            licensetype: "Public Domain",
             tags: "",
             description: "",
             alertMessage: "",
             loading: false,
-            visable: true
+            visable: true,
+            
         };
         this.onChangeHandler = this.onChangeHandler.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -52,6 +53,7 @@ class Upload extends React.Component {
         this.submitHandler = this.submitHandler.bind(this);
         this.fileHandler = this.fileHandler.bind(this);
         this.resetFailureAlert = this.resetFailureAlert.bind(this);
+        this.selectLicenseHandler = this.selectLicenseHandler.bind(this);
     }
 
     /**
@@ -95,6 +97,7 @@ class Upload extends React.Component {
         formData.append('licensetype', licensetype);
         formData.append('tags', tags);
         formData.append('description', description);
+      
 
         axios.post('http://localhost:3000/images/', formData)
             .then(response => {
@@ -133,8 +136,16 @@ class Upload extends React.Component {
 
     }
 
+    selectLicenseHandler(event){
+       
+        this.setState({licensetype: event.target.value});
+        
+    
+
+    }
+
     render() {
-        const { tags, author, licensetype, description, loading } = this.state;
+        const { tags, author, description, loading } = this.state;
         return (<div className="container">
             {this.state.alertMessage === "success" ? <SuccessAlert /> : null}
             {this.state.alertMessage === "error" ? <FailureAlert /> : null}
@@ -151,9 +162,16 @@ class Upload extends React.Component {
 
                         </div>
                         <div className="md-form">
-                            <label for="form1">Licens</label>
-                            <input type="text" id="form1" className="form-control" name="licensetype" value={licensetype} onChange={this.onChangeHandler} />
-                        </div>
+                            <label for="sel1">Licens</label>
+                            <select className="form-control" id="sel1" value= {this.state.licensetype} onChange={this.selectLicenseHandler}>
+                            <option value="Public Domain">Public Domain</option>
+                            <option value="Creative Commons License">Creative Commons License</option>
+                            <option value="Royalty Free Extended License">Royalty Free Extended License</option>
+                            <option value="Royalty Free License (RF)">Royalty Free License (RF)</option>
+                            <option value="Editorial Use License">Editorial Use License</option>
+                            <option value="Rights Managed (RM) License">Rights Managed (RM) License</option>
+                            </select>
+                        </div> 
                         <div className="md-form">
                             <label for="form1">Taggar</label>
                             <input type="text" id="form1" className="form-control" name="tags" value={tags} onChange={this.onChangeHandler} />
