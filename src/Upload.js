@@ -34,7 +34,6 @@ class Upload extends React.Component{
 
 
 
-
     };
     this.onChangeHandler = this.onChangeHandler.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
