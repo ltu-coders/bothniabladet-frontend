@@ -5,12 +5,7 @@ import axios from 'axios';
  * class Upload
  */
 
-const KeyCodes = {
-    comma: 188,
-    enter: 13,
-};
 
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 class SuccessAlert extends React.Component {
     render() {
