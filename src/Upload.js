@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Redirect } from "react-router-dom";
 
 /**
  * class Upload
@@ -32,7 +33,8 @@ class Upload extends React.Component {
         super(props);
 
         this.state = {
-            author: "",
+            author: props.user,
+            loggedIn: props.user !== "",
             images: "",
             licensetype: "Public Domain",
             tags: "",
@@ -140,7 +142,9 @@ class Upload extends React.Component {
     }
 
     render() {
+        if (!this.state.loggedIn) return <Redirect to="/login"/>
         const { tags, author, description, loading } = this.state;
+
         return (<div className="container">
             {this.state.alertMessage === "success" ? <SuccessAlert /> : null}
             {this.state.alertMessage === "error" ? <FailureAlert /> : null}

@@ -3,31 +3,86 @@ import { Upload } from './Upload.js'
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import { Results } from './Results';
 import { SingleImage } from './SingleImage';
+import { Col, Row, Button, Form, FormGroup, Label, Input, FormText, Container } from 'reactstrap';
 
-const App = () => {
-  return (
-    <Router>
-      <Navbar/>
+class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {user: ""}
+
+    this.setUser = this.setUser.bind(this)
+  }
+
+  setUser(user) {
+    this.setState({user: user})
+  }
+
+  render() {
+    return <Router>
+      <Navbar user={this.state.user}/>
       <div>
         <Route exact path="/" component={SearchBar} />
         <Route path="/search/:searchTerm?" component={Results} />
         <Route path="/images/:id" component={SingleImage} />
-        <Route path="/upload" component={Upload} />
+        <Route path="/upload" render={(props) => <Upload {...props} user={this.state.user} />}/>
+        <Route path="/login" render={(props) => <Login {...props} setUser={this.setUser}/>} />
       </div>
       <Activities />
     </Router>
-  )
-};
+  }
+}
+class Login extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {user: "", password: "", submitted: false}
+    this.onChange = this.onChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  
+  onChange(event) {
+    if (event.target.id === "user")
+      this.setState({user: event.target.value})
+    if (event.target.id === "password")
+    this.setState({password: event.target.value})
+  }
+
+  handleSubmit(event) {
+    this.setState({submitted: true})
+    this.props.setUser(this.state.user)
+    event.preventDefault();
+  }
+
+  render() {
+    if (this.state.submitted) return <Redirect to="/" />
+
+    return <Container>
+      <h2>Logga in</h2>
+      <Form onSubmit={this.handleSubmit}>
+    <FormGroup>
+      <Label for="user">Användarnamn</Label>
+      <Input type="text" name="user" id="user" onChange={this.onChange}/>
+    </FormGroup>
+    <FormGroup>
+      <Label for="password">Lösenord</Label>
+      <Input type="password" name="password" id="password" onChange={this.onChange}/>
+    </FormGroup>
+    <Button color="success">Skicka</Button>
+  </Form>
+  </Container>
+  }
+}
 
 /**
  * Länkar högst upp 
  */ 
-const Navbar = () => {
+const Navbar = ({user}) => {
   return <nav className="navbar navbar-light bg-light static-top">
-    <div className="container">
       <p className="navbar-brand"><Link to="/">Bothniabladet</Link></p>
-      <Link to="/" className="btn btn-primary">Logga in</Link>
-    </div>
+
+      {user !== "" ? <p>Inloggad som {user}</p> : <p></p>}
+        <Link to="/login" className="btn btn-primary">{user !== "" ? "Logga ut" : "Logga in"}</Link>
+        
   </nav>
 }
 
