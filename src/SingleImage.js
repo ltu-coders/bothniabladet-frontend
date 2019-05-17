@@ -58,6 +58,7 @@ export class SingleImage extends React.Component {
             </ul>
           </div>
         </div>
+        <div className="btn btn-primary">Köp bild</div>
       </div>);
     }
   }
