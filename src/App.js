@@ -26,11 +26,19 @@ class App extends React.Component {
         <Route path="/images/:id" component={SingleImage} />
         <Route path="/upload" render={(props) => <Upload {...props} user={this.state.user} />}/>
         <Route path="/login" render={(props) => <Login {...props} setUser={this.setUser}/>} />
+        <Route path="/logout" render={(props) => <Logout {...props} setUser={this.setUser}/>} />
       </div>
       <Activities />
     </Router>
   }
 }
+
+const Logout = ({setUser}) => {
+  setUser("")
+  return <Redirect to="/"/>
+}
+
+
 class Login extends React.Component {
   constructor(props) {
     super(props)
@@ -81,7 +89,9 @@ const Navbar = ({user}) => {
       <p className="navbar-brand"><Link to="/">Bothniabladet</Link></p>
 
       {user !== "" ? <p>Inloggad som {user}</p> : <p></p>}
-        <Link to="/login" className="btn btn-primary">{user !== "" ? "Logga ut" : "Logga in"}</Link>
+      {user !== "" ? 
+      <Link to="/logout" className="btn btn-primary">Logga ut</Link> : 
+      <Link to="/login" className="btn btn-primary">Logga in</Link>}
         
   </nav>
 }
