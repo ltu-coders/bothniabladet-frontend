@@ -15,6 +15,14 @@ class Results extends React.Component {
       fromTimestamp: null,
       toTimestamp: null
     };
+
+
+    this.setFilterTerm = this.setFilterTerm.bind(this)
+    this.setFromTimestamp = this.setFromTimestamp.bind(this)
+    this.setToTimestamp = this.setToTimestamp.bind(this)
+  }
+
+  componentDidMount() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -31,16 +39,12 @@ class Results extends React.Component {
       this.setState({ showAlert: false })
     }.bind(this), 2000)
 
-    if (props.match.params.searchTerm)
-      xhr.open('GET', `/images?tags=${props.match.params.searchTerm}`);
+    if (this.props.match.params.searchTerm)
+      xhr.open('GET', `/images?tags=${this.props.match.params.searchTerm}`);
     else {
       xhr.open('GET', `/images`);
     }
     xhr.send();
-
-    this.setFilterTerm = this.setFilterTerm.bind(this)
-    this.setFromTimestamp = this.setFromTimestamp.bind(this)
-    this.setToTimestamp = this.setToTimestamp.bind(this)
   }
 
   setFilterTerm(term) {
@@ -87,7 +91,7 @@ class Results extends React.Component {
 function ResultCard({ image, filterTerm, fromTimestamp, toTimestamp }) {
   let imageDate = new Date(Date.parse(image.dateTime))
   let imageTimestamp = imageDate.getTime()
-  let dateString = imageDate.toLocaleDateString()
+  let dateString = imageTimestamp === -3600000 ? "" : imageDate.toLocaleDateString()
 
   // Check if the picture should be shown
   filterTerm = filterTerm.toLowerCase()
@@ -106,10 +110,10 @@ function ResultCard({ image, filterTerm, fromTimestamp, toTimestamp }) {
 
   if (fromTimestamp != null && fromTimestamp > imageTimestamp) { show = false }
   if (toTimestamp != null && toTimestamp < imageTimestamp) { show = false }
-  let tags = image.tags.map(t => <span key={t.tagId} className="badge badge-info">{t.tagName}</span>)
+  let tags = image.tags.map(t => <span key={t.tagId} className="badge badge-pill badge-info mr-1">{t.tagName}</span>)
   if (show) {
-    return <div className="col-6 col-md-3">
-      <div className="card">
+    return <div className="col-6 col-md-3 mb-4">
+      <div className="card h-100">
         <Link to={"/images/" + image.imageId}>
         <img className="card-img-top" src={'/images/' + image.fileName} alt="Exempel" />
         </Link>
@@ -152,7 +156,7 @@ class FilterInput extends React.Component {
 
 
   render() {
-    return <div className="border m-2 p-1">
+    return <div className="border mb-2 mt-2 p-1">
       <Row form>
         <Col>
           <FormGroup>

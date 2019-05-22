@@ -47,6 +47,7 @@ export class SingleImage extends React.Component {
               <li className="list-group-item">Datum: {dateString}</li>
               <li className="list-group-item">Taggar: {tags}</li>
               <li className="list-group-item">Filnamn: {image.fileName}</li>
+              <li className="list-group-item">Kamera: {image.make} {image.model}</li>
             </ul>
           </div>
           <div className="col">
@@ -55,10 +56,12 @@ export class SingleImage extends React.Component {
               <li className="list-group-item">Plats: {image.location}</li>
               <li className="list-group-item">Antal användningar/tillåtna: {image.imageUseCount}/{image.noOfAllowedUses}</li>
               <li className="list-group-item">PUID: {image.puid}</li>
+              <li className="list-group-item">Storlek: {image.width}x{image.height}</li>
             </ul>
           </div>
         </div>
-        <div className="btn btn-primary">Köp bild</div>
+        <div className="btn btn-primary m-1">Köp bild</div>
+        <div className="btn btn-primary m-1">Ändra</div>
       </div>);
     }
   }

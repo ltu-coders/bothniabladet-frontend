@@ -142,7 +142,7 @@ class Upload extends React.Component {
     }
 
     render() {
-        if (!this.state.loggedIn) return <Redirect to="/login"/>
+        if (!this.state.loggedIn) return <Redirect push to="/login"/>
         const { tags, author, description, loading } = this.state;
 
         return (<div className="container">
@@ -172,7 +172,7 @@ class Upload extends React.Component {
                             </select>
                         </div> 
                         <div className="md-form">
-                            <label for="form1">Taggar</label>
+                            <label for="form1">Taggar, separera flera taggar med komma</label>
                             <input type="text" id="form1" className="form-control" name="tags" value={tags} onChange={this.onChangeHandler} />
                         </div>
                         <div className="md-form">

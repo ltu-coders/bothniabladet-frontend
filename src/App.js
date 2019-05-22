@@ -62,7 +62,7 @@ class Login extends React.Component {
   }
 
   render() {
-    if (this.state.submitted) return <Redirect to="/" />
+    if (this.state.submitted) return <Redirect push to="/" />
 
     return <Container>
       <h2>Logga in</h2>
@@ -156,7 +156,7 @@ class SearchBar extends React.Component {
   }
 
   render() {
-    return this.state.searchClicked ? <Redirect to={"search/" + this.state.searchTerm} /> :
+    return this.state.searchClicked ? <Redirect push to={"search/" + this.state.searchTerm} /> :
       <header className="masthead text-white text-center">
         <div className="overlay"></div>
         <div className="container">
