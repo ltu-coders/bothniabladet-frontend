@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import { Col, Row, FormGroup, Label, Input } from 'reactstrap';
+
 /**
- * Sida med sökresultat
+ * Component with search results and component for filtering the results
  */
 class Results extends React.Component {
   constructor(props) {
@@ -16,13 +17,13 @@ class Results extends React.Component {
       toTimestamp: null
     };
 
-
     this.setFilterTerm = this.setFilterTerm.bind(this)
     this.setFromTimestamp = this.setFromTimestamp.bind(this)
     this.setToTimestamp = this.setToTimestamp.bind(this)
   }
 
   componentDidMount() {
+    // Get the search results from the server
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -35,16 +36,17 @@ class Results extends React.Component {
       }
     };
 
-    setTimeout(function () { //Start the timer
-      this.setState({ showAlert: false })
-    }.bind(this), 2000)
-
     if (this.props.match.params.searchTerm)
       xhr.open('GET', `/images?tags=${this.props.match.params.searchTerm}`);
     else {
       xhr.open('GET', `/images`);
     }
     xhr.send();
+
+    // Timer to hide alert
+    setTimeout(function () {
+      this.setState({ showAlert: false })
+    }.bind(this), 2000)
   }
 
   setFilterTerm(term) {
@@ -60,6 +62,7 @@ class Results extends React.Component {
   }
 
   render() {
+    // Build a list of the cards with a single image
     let cards = this.state.results.map(
       (image) => <ResultCard
         image={image}
@@ -68,32 +71,34 @@ class Results extends React.Component {
         toTimestamp={this.state.toTimestamp}
         fromTimestamp={this.state.fromTimestamp}
       />);
+
     let alert = ""
     if (this.state.showAlert) {
       alert = <div className="alert alert-success">Du sökte efter {this.props.match.params.searchTerm}</div>
     }
-    return <div className="container">
-      {alert}
-      <FilterInput setFilterTerm={this.setFilterTerm} setFromTimestamp={this.setFromTimestamp} setToTimestamp={this.setToTimestamp} />
-      <section>
-        <div className="row">
-          {cards}
-        </div>
-      </section>
-    </div>;
+
+    return (
+      <div className="container">
+        {alert}
+        <FilterInput setFilterTerm={this.setFilterTerm} setFromTimestamp={this.setFromTimestamp} setToTimestamp={this.setToTimestamp} />
+        <section>
+          <div className="row">
+            {cards}
+          </div>
+        </section>
+      </div>);
   }
 }
 
-
 /**
- * En bild i sökresultaten
+ * One card with an image
  */
 function ResultCard({ image, filterTerm, fromTimestamp, toTimestamp }) {
   let imageDate = new Date(Date.parse(image.dateTime))
   let imageTimestamp = imageDate.getTime()
   let dateString = imageTimestamp === -3600000 ? "" : imageDate.toLocaleDateString()
 
-  // Check if the picture should be shown
+  // Check filter term if the picture should be shown
   filterTerm = filterTerm.toLowerCase()
   let show = false
   if (image.description.toLowerCase().includes(filterTerm) ||
@@ -108,31 +113,34 @@ function ResultCard({ image, filterTerm, fromTimestamp, toTimestamp }) {
     show = true
   }
 
+  // Check date
   if (fromTimestamp != null && fromTimestamp > imageTimestamp) { show = false }
   if (toTimestamp != null && toTimestamp < imageTimestamp) { show = false }
-  let tags = image.tags.map(t => <span key={t.tagId} className="badge badge-pill badge-info mr-1">{t.tagName}</span>)
-  if (show) {
-    return <div className="col-6 col-md-3 mb-4">
-      <div className="card h-100">
-        <Link to={"/images/" + image.imageId}>
-        <img className="card-img-top" src={'/images/' + image.fileName} alt="Exempel" />
-        </Link>
-        <div className="card-body">
-          <p className="card-text">{image.description}</p>
-          <p className="card-text">{tags}</p>
-        </div>
 
-        <div className="card-footer">
-          <small className="text-muted">{image.author.firstName} {image.author.lastName} {dateString}</small>
+  if (show) {
+    let tags = image.tags.map(t => <span key={t.tagId} className="badge badge-pill badge-info mr-1">{t.tagName}</span>)
+    return (
+      <div className="col-6 col-md-3 mb-4">
+        <div className="card h-100">
+          <Link to={"/images/" + image.imageId}>
+            <img className="card-img-top" src={'/images/' + image.fileName} alt="Exempel" />
+          </Link>
+          <div className="card-body">
+            <p className="card-text">{image.description}</p>
+            <p className="card-text">{tags}</p>
+          </div>
+
+          <div className="card-footer">
+            <small className="text-muted">{image.author.firstName} {image.author.lastName} {dateString}</small>
+          </div>
         </div>
-      </div>
-    </div>
+      </div>)
   }
   return null
 }
 
 /**
- * Komponent för att välja filter
+ * Component where user can select filter
  */
 class FilterInput extends React.Component {
   constructor(props) {
@@ -154,34 +162,34 @@ class FilterInput extends React.Component {
     }
   }
 
-
   render() {
-    return <div className="border mb-2 mt-2 p-1">
-      <Row form>
-        <Col>
-          <FormGroup>
-            <Label for="searchTerm">Fritext sökning</Label>
-            <Input type="text" name="email" id="searchTerm" onChange={this.handleChange} />
-          </FormGroup>
-        </Col>
-        <Col>
-          <Label for="fromDate">Datum från</Label>
-          <Input
-            type="date"
-            id="fromDate"
-            onChange={this.handleChange}
-          />
-        </Col>
-        <Col>
-          <Label for="toDate">Datum till</Label>
-          <Input
-            type="date"
-            id="toDate"
-            onChange={this.handleChange}
-          />
-        </Col>
-      </Row>
-    </div>
+    return (
+      <div className="border mb-2 mt-2 p-1">
+        <Row form>
+          <Col>
+            <FormGroup>
+              <Label for="searchTerm">Fritext sökning</Label>
+              <Input type="text" name="email" id="searchTerm" onChange={this.handleChange} />
+            </FormGroup>
+          </Col>
+          <Col>
+            <Label for="fromDate">Datum från</Label>
+            <Input
+              type="date"
+              id="fromDate"
+              onChange={this.handleChange}
+            />
+          </Col>
+          <Col>
+            <Label for="toDate">Datum till</Label>
+            <Input
+              type="date"
+              id="toDate"
+              onChange={this.handleChange}
+            />
+          </Col>
+        </Row>
+      </div>)
   }
 }
 

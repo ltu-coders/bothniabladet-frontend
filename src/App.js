@@ -3,60 +3,74 @@ import { Upload } from './Upload.js'
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import { Results } from './Results';
 import { SingleImage } from './SingleImage';
-import { Col, Row, Button, Form, FormGroup, Label, Input, FormText, Container } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Container } from 'reactstrap';
 
+/**
+ * This is the main component for the application
+ */
 class App extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {user: ""}
-
+    this.state = { user: "" }
     this.setUser = this.setUser.bind(this)
   }
 
   setUser(user) {
-    this.setState({user: user})
+    this.setState({ user: user })
   }
 
+  /**
+   * Render the website
+   * Uses the router and state to render the correct components
+   */
   render() {
     return <Router>
-      <Navbar user={this.state.user}/>
+      <Navbar user={this.state.user} />
       <div>
         <Route exact path="/" component={SearchBar} />
         <Route path="/search/:searchTerm?" component={Results} />
         <Route path="/images/:id" component={SingleImage} />
-        <Route path="/upload" render={(props) => <Upload {...props} user={this.state.user} />}/>
-        <Route path="/login" render={(props) => <Login {...props} setUser={this.setUser}/>} />
-        <Route path="/logout" render={(props) => <Logout {...props} setUser={this.setUser}/>} />
+        <Route path="/upload" render={(props) => <Upload {...props} user={this.state.user} />} />
+        <Route path="/login" render={(props) => <Login {...props} setUser={this.setUser} />} />
+        <Route path="/logout" render={(props) => <Logout {...props} setUser={this.setUser} />} />
       </div>
       <Activities />
     </Router>
   }
 }
 
-const Logout = ({setUser}) => {
+/**
+ * Component to log out user
+ * @param {*} param0 
+ */
+const Logout = ({ setUser }) => {
   setUser("")
-  return <Redirect to="/"/>
+  return <Redirect to="/" />
 }
 
-
+/**
+ * Log in component
+ */
 class Login extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {user: "", password: "", submitted: false}
+    this.state = { user: "", password: "", submitted: false }
     this.onChange = this.onChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  
+  /**
+   * Handle input from user
+   */
   onChange(event) {
     if (event.target.id === "user")
-      this.setState({user: event.target.value})
+      this.setState({ user: event.target.value })
     if (event.target.id === "password")
-    this.setState({password: event.target.value})
+      this.setState({ password: event.target.value })
   }
 
   handleSubmit(event) {
-    this.setState({submitted: true})
+    this.setState({ submitted: true })
     this.props.setUser(this.state.user)
     event.preventDefault();
   }
@@ -64,40 +78,40 @@ class Login extends React.Component {
   render() {
     if (this.state.submitted) return <Redirect push to="/" />
 
-    return <Container>
+    return (
+    <Container>
       <h2>Logga in</h2>
       <Form onSubmit={this.handleSubmit}>
-    <FormGroup>
-      <Label for="user">Användarnamn</Label>
-      <Input type="text" name="user" id="user" onChange={this.onChange}/>
-    </FormGroup>
-    <FormGroup>
-      <Label for="password">Lösenord</Label>
-      <Input type="password" name="password" id="password" onChange={this.onChange}/>
-    </FormGroup>
-    <Button color="success">Skicka</Button>
-  </Form>
-  </Container>
+        <FormGroup>
+          <Label for="user">Användarnamn</Label>
+          <Input type="text" name="user" id="user" onChange={this.onChange} />
+        </FormGroup>
+        <FormGroup>
+          <Label for="password">Lösenord</Label>
+          <Input type="password" name="password" id="password" onChange={this.onChange} />
+        </FormGroup>
+        <Button color="success">Skicka</Button>
+      </Form>
+    </Container>)
   }
 }
 
 /**
- * Länkar högst upp 
- */ 
-const Navbar = ({user}) => {
+ * Navigation bar at top of page
+ */
+const Navbar = ({ user }) => {
   return <nav className="navbar navbar-light bg-light static-top">
-      <p className="navbar-brand"><Link to="/">Bothniabladet</Link></p>
+    <p className="navbar-brand"><Link to="/">Bothniabladet</Link></p>
 
-      {user !== "" ? <p>Inloggad som {user}</p> : <p></p>}
-      {user !== "" ? 
-      <Link to="/logout" className="btn btn-primary">Logga ut</Link> : 
+    {user !== "" ? <p>Inloggad som {user}</p> : <p></p>}
+    {user !== "" ?
+      <Link to="/logout" className="btn btn-primary">Logga ut</Link> :
       <Link to="/login" className="btn btn-primary">Logga in</Link>}
-        
   </nav>
 }
 
 /**
- * Länkar till aktiviteter
+ * Cards with links to activites (upload and send tip)
  */
 const Activities = () =>
   <div className="container">
@@ -129,7 +143,7 @@ const Activities = () =>
   </div>
 
 /**
- * Sökfält på förstasidan
+ * Search bar on start page
  */
 class SearchBar extends React.Component {
   constructor() {

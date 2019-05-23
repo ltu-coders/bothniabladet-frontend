@@ -1,15 +1,19 @@
 import React from 'react';
+
 /**
- * Sida med en bild
+ * Page with single image
  */
 export class SingleImage extends React.Component {
   constructor(props) {
     super(props);
     console.log(props);
     let imageId = props.match.params.id;
+
     this.state = {
       loading: true
     };
+
+    // Get information about image from server
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE) {

@@ -2,32 +2,21 @@ import React from 'react';
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
 
+
+const SuccessAlert = () => (
+    <div className="alert alert-success" role="alert">
+        Bild uppladdad!
+    </div>)
+
+const FailureAlert = () => (
+    <div className="alert alert-danger" role="alert">
+        Failed to upload image to database!
+    </div>
+)
+
 /**
- * class Upload
+ * Component where user can upload an image
  */
-
-
-
-class SuccessAlert extends React.Component {
-    render() {
-        return (
-            <div className="alert alert-success" role="alert">
-                Bild uppladdad!
-            </div>
-        );
-    }
-}
-
-class FailureAlert extends React.Component {
-    render() {
-        return (
-            <div className="alert alert-danger" role="alert">
-                Failed to upload image to database!
-                </div>
-        );
-    }
-}
-
 class Upload extends React.Component {
     constructor(props) {
         super(props);
@@ -42,7 +31,7 @@ class Upload extends React.Component {
             alertMessage: "",
             loading: false,
             visable: true,
-            
+
         };
         this.onChangeHandler = this.onChangeHandler.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -56,7 +45,6 @@ class Upload extends React.Component {
     /**
      * Handle delete tags
      */
-
     handleDelete(i) {
         const { tags } = this.state;
         this.setState({
@@ -67,20 +55,19 @@ class Upload extends React.Component {
     /**
      * Handle Add tags
      */
-
     handleAddition(tag) {
         this.setState(state => ({ tags: [...state.tags, tag] }));
     }
 
     /**
-   * onChange handler 
-   */
+     * onChange handler 
+     */
     onChangeHandler(event) {
         this.setState({ [event.target.name]: event.target.value })
     }
 
     /**
-     * submit handler 
+     * User clicked submit, upload image to server
      */
     submitHandler(event) {
         event.preventDefault();
@@ -94,7 +81,6 @@ class Upload extends React.Component {
         formData.append('licensetype', licensetype);
         formData.append('tags', tags);
         formData.append('description', description);
-      
 
         axios.post('http://localhost:3000/images/', formData)
             .then(response => {
@@ -125,24 +111,18 @@ class Upload extends React.Component {
     fileHandler(event) {
         let fileUpload = event.target.files[0];
         this.setState({ images: fileUpload, alertMessage: "" });
-
     }
 
     resetFailureAlert() {
         this.setState({ visable: true });
-
     }
 
-    selectLicenseHandler(event){
-       
-        this.setState({licensetype: event.target.value});
-        
-    
-
+    selectLicenseHandler(event) {
+        this.setState({ licensetype: event.target.value });
     }
 
     render() {
-        if (!this.state.loggedIn) return <Redirect push to="/login"/>
+        if (!this.state.loggedIn) return <Redirect push to="/login" />
         const { tags, author, description, loading } = this.state;
 
         return (<div className="container">
@@ -162,15 +142,15 @@ class Upload extends React.Component {
                         </div>
                         <div className="md-form">
                             <label for="sel1">Licens</label>
-                            <select className="form-control" id="sel1" value= {this.state.licensetype} onChange={this.selectLicenseHandler}>
-                            <option value="Public Domain">Public Domain</option>
-                            <option value="Creative Commons License">Creative Commons License</option>
-                            <option value="Royalty Free Extended License">Royalty Free Extended License</option>
-                            <option value="Royalty Free License (RF)">Royalty Free License (RF)</option>
-                            <option value="Editorial Use License">Editorial Use License</option>
-                            <option value="Rights Managed (RM) License">Rights Managed (RM) License</option>
+                            <select className="form-control" id="sel1" value={this.state.licensetype} onChange={this.selectLicenseHandler}>
+                                <option value="Public Domain">Public Domain</option>
+                                <option value="Creative Commons License">Creative Commons License</option>
+                                <option value="Royalty Free Extended License">Royalty Free Extended License</option>
+                                <option value="Royalty Free License (RF)">Royalty Free License (RF)</option>
+                                <option value="Editorial Use License">Editorial Use License</option>
+                                <option value="Rights Managed (RM) License">Rights Managed (RM) License</option>
                             </select>
-                        </div> 
+                        </div>
                         <div className="md-form">
                             <label for="form1">Taggar, separera flera taggar med komma</label>
                             <input type="text" id="form1" className="form-control" name="tags" value={tags} onChange={this.onChangeHandler} />
